@@ -15,3 +15,10 @@
 ```bash
   $ npm run test
 ```
+
+## Resources
+
+- [Mocha](https://mochajs.org/)
+- [Chai](http://chaijs.com/)
+- [Babel](https://babeljs.io/)
+- [ES2015 Compatibility Table](https://kangax.github.io/compat-table/es6/)

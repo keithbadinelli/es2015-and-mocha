@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>Introduction to ES2015 and Javascript Testing With Mocha and Chai</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/css/reveal.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/css/theme/moon.min.css" id="theme">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
@@ -427,6 +428,7 @@
                   <script type="text/template">
                     ## Async Tests
                     - Mocha detects presence of `done` function and waits to score test until function is called
+                    - Set timeout to fail test if `done` isn't run within a given time
                     ```javascript
                       // ./test/asyncFunction.js
                       const expect = require('chai').expect;
@@ -434,6 +436,8 @@
 
                       describe('asyncFunction', function() {
                         it('should call the callback', function(done) {
+                          this.timeout(110);
+
                           asyncFunction((err, result) => {
                             expect(result).to.equal('done');
                             done();
@@ -441,6 +445,8 @@
                         });
 
                         it('should resolve the promise', function(done) {
+                          this.timeout(110);
+
                           asyncFunction().then((result) => {
                             expect(result).to.equal('done');
                             done();
@@ -448,6 +454,54 @@
                         });
                       });
                     ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Additional Functionality
+                    ```javascript
+                      const expect = require('chai').expect;
+                      const createUser = require('../src/createUser');
+
+                      const firstName = 'John';
+                      const lastName = 'Smith';
+
+                      describe('createUser', function () {
+                        // Run once before test cases
+                        before(function () {
+                          this.user = createUser({
+                            firstName,
+                            lastName,
+                          });
+                        });
+
+                        it('should assign first and last name', function () {
+                          expect(this.user.firstName).to.equal(firstName);
+                          expect(this.user.lastName).to.equal(lastName);
+                        });
+
+                        //Nested describe for a method or other subset of functionality
+                        describe('#fullName', function () {
+                          // Run once before test cases
+                          before(function() {
+                            this.fullName = this.user.fullName();
+                          });
+
+                          it('should return a string', function () {
+                            expect(this.fullName).to.be.a('string');
+                          });
+
+                          it('should return the user\'s full name', function () {
+                            expect(this.fullName).to.equal(`${firstName} ${lastName}`);
+                          });
+                        });
+                      });
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    # End
                   </script>
                 </section>
             </div>
