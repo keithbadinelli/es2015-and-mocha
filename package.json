@@ -1,0 +1,14 @@
+{
+  "name": "es2015-and-mocha",
+  "version": "1.0.0",
+  "description": "Intro to ES2015 and Javascript Testing With Mocha and Chai",
+  "scripts": {
+    "test": "mocha ./test",
+    "test:watch": "npm run test -- -w"
+  },
+  "author": "Keith Badinelli",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/css/reveal.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/css/theme/moon.min.css" id="theme">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+        <style>
+          .reveal h2 {
+            text-transform: none;
+          }
+          .reveal pre {
+            font-size: 0.4em;
+          }
+          .reveal ul {
+            display: block;
+          }
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown>
+                  <script type="text/template">
+                    # Introduction to ES2015 and Javascript Testing With Mocha and Chai
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## ES2015 (ES6)
+                    - ECMAScript is the standard that JavaScript (and ActionScript) are based on
+                    - ES5 was released in 2009 and introduced things like `Date.now()`, trailing comma support, and `Array.prototype.map/reduce/forEach/filter`
+                    - ES2015 is the latest significant update to ECMAScript (ES2016 contains only two minor features)
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## ES2015 Features
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## `let` Keyword
+                    - `let` is block-scoped
+                      ```javascript
+                      // ES2015
+                      if (true) {
+                          let x = 10;
+                      }
+                      console.log(x); // undefined
+
+                      let x = 10;
+                      if (true) {
+                          x = 9;
+                      }
+                      console.log(x); // 9
+                      ```
+                      ```javascript
+                      // ES5
+                      if (true) {
+                          var x = 10;
+                      }
+                      console.log(x); // 10
+                      ```
+                    - `let` does not create a property on the global object
+                      ```javascript
+                      // ES2015
+                      let x = 10;
+                      console.log(window.x); // undefined
+                      ```
+                      ```javascript
+                      // ES5
+                      var x = 10;
+                      console.log(window.x); // 10
+                      ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## `const` Keyword
+                    - Variables declared with `const` cannot be reassigned
+                    - However, object properties and array values can be changed
+                    ```javascript
+                      const x = 10;
+                      x = 12; // TypeError
+
+                      const person = { firstName: 'John' };
+                      person.lastName = 'Smith';
+                      person.firstName = 'Mark';
+                      console.log(person); // { firstName: 'Mark', lastName: 'Smith' }
+
+                      person = { firstName: 'Sally' }; // TypeError
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Destructuring Objects
+                    ```javascript
+                      // ES5
+                      var user = { firstName: 'John', lastName: 'Smith', email: 'jsmith@smith.com' };
+                      var firstName = user.firstName;
+                      var email = user.email;
+                      console.log(firstName, email); // John,jsmith@smith.com
+
+                      var _ = require('lodash');
+                      _.isArray([]); // true;
+
+                      getUser().then(function (user) {
+                        console.log(user.firstName); // John
+                      });
+                    ```
+                    ```javascript
+                      // ES2015
+                      const user = { firstName: 'John', lastName: 'Smith', email: 'jsmith@smith.com' };
+                      const { firstName, email } = user;
+                      console.log(firstName, email); // John,jsmith@smith.com
+
+                      const { isArray } = require('lodash'); // extract isArray from lodash
+                      isArray([]); // true
+
+                      getUser().then(function ({ firstName }) { // works on function arguments
+                        console.log(firstName); // John
+                      });
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Destructuring Arrays
+                    ``` javascript
+                      const arr = ['a', 'b'];
+                      const [x, y] = arr;
+                      console.log(x, y); // a, b
+
+                      const [x, , y] = ['a', 'b', 'c'];
+                      console.log(x, y); // a, c
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## String and Template Literals
+                    ``` javascript
+                      // ES5
+                      var user = {
+                          firstName: 'John',
+                          lastName: 'Smith',
+                          fullName: function() {
+                              return this.firstName + ' ' + this.lastName;
+                          },
+                      };
+                      console.log('Welcome, ' + user.fullName() + '. You are currently logged in.');
+                    ```
+                    ``` javascript
+                      // ES2015
+                      const user = {
+                          firstName: 'John',
+                          lastName: 'Smith',
+                          fullName: function() {
+                              return `${this.firstName} ${this.lastName}`;
+                          },
+                      };
+                      console.log(`Welcome, ${user.fullName()}.  You are currently logged in.`);
+                    ```
+                  </script>
+                </section>
+
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Parameters
+                    - Default parameters
+                    ```javascript
+                      // ES5
+                      function doSomething(x) {
+                          x = x || 10; // default parameter
+                      }
+                    ```
+                    ```javascript
+                      // ES2015
+                      function doSomething(x = 10) { // default parameter
+
+                      }
+                    ```
+                    - `rest` parameter
+                    ```javascript
+                      // ES5
+                      logArguments(1, 2, 3)
+                      function logArguments() {
+                        Array.prototype.slice.call(arguments).forEach(function (arg) {
+                            console.log(arg)
+                        }); // 1, 2, 3
+                      }
+                    ```
+                    ```javascript
+                      // ES2015
+                      logArguments(1, 2, 3)
+                      function logArguments(...args) {
+                          args.forEach(function (arg) {
+                              console.log(arg);
+                          }); // 1, 2, 3
+                      }
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Spread
+                    - `...` in ES2015 can also be used to "spread" array literals
+                    ```javascript
+                      // ES5
+                      var args = ['x', 'y', 'z'];
+                      function spreadES5(a, b, c) {
+
+                      }
+                      spreadES5.apply(null, args);
+                    ```
+                    ```javascript
+                      // ES2015
+                      const args = ['x', 'y', 'z'];
+                      function spreadES6(a, b, c) {
+
+                      }
+                      spreadES5(...args);
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Modules
+                    - Standardized module syntax, similar to CommonJS and AMD
+                    - Two types of exports
+                      - Default exports are used to export a single, default object
+                      - Named exports are used to export multiple objects
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Modules (Default export)
+                    - Export
+                    ```javascript
+                      // add.js
+                      export default function(a, b) {
+                        return a + b;
+                      }
+                    ```
+                    - Import
+                    ```javascript
+                      // main.js
+                      import add from './add';
+
+                      add(1, 1); // 2
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Modules (Named exports)
+                    - Export
+                    ```javascript
+                      // lib.js
+                      export function add(a, b) {
+                        return a + b;
+                      } // export a function
+
+                      export const ENV = 'production'; // export a constant
+                    ```
+                    - Import
+                    ```javascript
+                      // main.js
+                      import { add, ENV } from './lib'; // destructure named exports
+
+                      add(1, 1); // 2
+                      console.log(ENV); // production
+                    ```
+                    OR
+                    ```javascript
+                      // main.js
+                      import * as lib from './lib'; // import all named exports
+
+                      lib.add(1, 1); // 2
+                      console.log(lib.ENV); // production
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Arrows / Lexical `this`
+                    - Arrows are a shorthand function syntax using `=>`, similar to C# and Java
+                    - Share `this` with their surrounding code, unlike functions
+                    - Share `arguments` object with parent function if contained within another function
+                    - Can avoid `return` and `function` keywords
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Arrows / Lexical `this`
+                    ```javascript
+                      // ES5
+                      function getData() {
+                        var self = this;
+                        $.ajax().then(function(data) {
+                            self.data = data;
+                        });
+                        // or
+                        $.ajax().then(function(data) {
+                            this.data = data;
+                        }.bind(this));
+                      }
+                      function add(a, b) {
+                        return a + b;
+                      }
+                    ```
+                    ```javascript
+                      // ES2015
+                      function getData() {
+                        $.ajax().then(data => {
+                          this.data = data;
+                        });
+                      }
+                      const add = (a, b) => a + b;
+                    ```
+                  </script>
+                </section>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Improved Object Literals
+                    ```javascript
+                      const firstName = 'John';
+                      const someVariable = 'xyz';
+                      const someValue = 'hello';
+
+                      const obj = {
+                          firstName, // same as firstName: firstName,
+                          fullName() { // method, same as fullName: function () {},
+
+                          },
+                          ['b' + someVariable]: someValue, // computed properties
+                      };
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## ES2015 Support
+                    - Safari 10: 100%
+                    - Chrome 57: 97%
+                    - Node 6.5: 97%
+                    - FF 53: 96%
+                    - Edge 15: 95%
+                    - Babel (Transpiler): 71%
+                    - IE 11: 11%
+
+                    *Aside from IE11, these numbers are nearly identical to ES5 (2009) support numbers at this time
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Part 2: Javascript Testing with Mocha and Chai
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## What is Mocha?
+                    - Async Javascript testing framework
+                    - Supports multiple testing styles
+                    - Built-in file watching
+                    - Supports promises
+                    - Supports any assertion library
+                    - <a href="https://mochajs.org/#features" target="_blank">More</a>
+                    ```javascript
+                      describe('myLibrary', function() {
+                        it('should do something magical', function() {
+                          // insert assertion library here
+                        });
+                      });
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## What is Chai?
+                    - Javascript assertion library
+                    - Multiple interfaces (TDD or BDD): choose from `should`, `expect`, or `assert`
+                    - Pluggable: add custom functionaliy, such as DOM assertions
+                    ```javascript
+                      expect(user).to.be.an.instanceOf(User);
+                      expect(user.name).to.be.a('string');
+                      expect([1, 2, 3]).to.include(3);
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Setting up a project
+                    ```bash
+                      $ npm init # Initialize project
+                      $ npm i -D mocha chai # Add mocha and chai to dev dependencies
+                      $ mkdir test # Create a directory to hold tests
+                    ```
+                    ```json
+                      // package.json
+                      {
+                        "scripts": {
+                          "test": "mocha ./test",
+                          "test:watch": "npm run test -- -w"
+                        }
+                      }
+                    ```
+                    ```javascript
+                      // ./test/add.js
+                      const expect = require('chai').expect;
+                      const add = require('../src/add');
+
+                      describe('add', function() {
+                       it('should add two numbers', function() {
+                         expect(add(1, 1)).to.equal(2);
+                       });
+                      });
+                    ```
+                    ```bash
+                      $ npm run test
+                    ```
+                  </script>
+                </section>
+                <section data-markdown>
+                  <script type="text/template">
+                    ## Async Tests
+                    - Mocha detects presence of `done` function and waits to score test until function is called
+                    ```javascript
+                      // ./test/asyncFunction.js
+                      const expect = require('chai').expect;
+                      const asyncFunction = require('../src/asyncFunction');
+
+                      describe('asyncFunction', function() {
+                        it('should call the callback', function(done) {
+                          asyncFunction((err, result) => {
+                            expect(result).to.equal('done');
+                            done();
+                          });
+                        });
+
+                        it('should resolve the promise', function(done) {
+                          asyncFunction().then((result) => {
+                            expect(result).to.equal('done');
+                            done();
+                          });
+                        });
+                      });
+                    ```
+                  </script>
+                </section>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/lib/js/head.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/js/reveal.js"></script>
+        <script>
+            Reveal.initialize({
+              history: true,
+              dependencies: [
+                {
+                  src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/plugin/markdown/marked.min.js',
+                  condition: function () { return !!document.querySelector( '[data-markdown]' ); },
+                },
+                {
+                  src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/plugin/markdown/markdown.min.js',
+                  condition: function () { return !!document.querySelector( '[data-markdown]' ); },
+                },
+                {
+                  src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/plugin/highlight/highlight.min.js',
+                  async: true,
+                  callback: function() { hljs.initHighlightingOnLoad(); } },
+              ],
+            });
+        </script>
+    </body>
+</html>
